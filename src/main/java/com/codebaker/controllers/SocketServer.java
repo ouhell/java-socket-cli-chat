@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SocketServer {
     ServerSocket principalSocket;
-    int port ;
+    int port;
 
     public SocketServer(int port) throws IOException {
         this.principalSocket = new ServerSocket(port);
@@ -17,10 +17,12 @@ public class SocketServer {
 
 
     public void startServer() throws IOException {
-        System.out.println("Server Started On Port :: "+ this.port);
+        System.out.println("Server Started On Port :: " + this.port);
         while (!principalSocket.isClosed()) {
             Socket connectedSocket = principalSocket.accept();
             System.out.println("client connected :: " + connectedSocket.getInetAddress());
+            Thread connection = new Thread(new ConnectedClient(connectedSocket));
+            connection.start();
 
         }
     }

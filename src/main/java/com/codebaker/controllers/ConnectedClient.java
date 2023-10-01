@@ -1,6 +1,7 @@
 package com.codebaker.controllers;
 
 import com.codebaker.model.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -18,11 +19,13 @@ public class ConnectedClient implements Runnable {
 
     private final Socket socket;
 
+    private String username;
+
     public ConnectedClient(Socket socket) throws IOException {
         this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.socket = socket;
-
+        this.username = "";
     }
 
     private void awaitMessage() {
@@ -46,8 +49,27 @@ public class ConnectedClient implements Runnable {
 
     private void broadcastMessage(Message message, String json) {
         connectedClients.forEach((client) -> {
-            client.receiveMessage(json);
+            if (client != this)
+                client.receiveMessage(json);
         });
+    }
+
+
+    private void broadcastMessage(Message message) {
+
+        try {
+            String json = new ObjectMapper().writeValueAsString(message);
+            connectedClients.forEach((client) -> {
+
+
+                if (client != this)
+                    client.receiveMessage(json);
+            });
+        } catch (JsonProcessingException e) {
+            System.out.println(e.getMessage());
+
+        }
+
     }
 
     public boolean receiveMessage(String json) {
@@ -74,6 +96,14 @@ public class ConnectedClient implements Runnable {
 
 
         timout.cancel();
+        try {
+            this.username = input.readLine();
+        } catch (IOException e) {
+            close();
+        }
+
+        connectedClients.add(this);
+        broadcastMessage(new Message(this.username + " has joined the chat.", "SERVER", "random"));
         awaitMessage();
     }
 

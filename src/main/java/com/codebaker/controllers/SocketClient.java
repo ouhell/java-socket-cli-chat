@@ -63,9 +63,12 @@ public class SocketClient {
     }
 
     public void startClient() {
-        Thread inputListener = new Thread(() -> {
-            this.listenForClientInput();
-        });
+        try {
+            output.write(username);
+        } catch (IOException e) {
+            close();
+        }
+        Thread inputListener = new Thread(this::listenForClientInput);
         inputListener.start();
         awaitMessages();
     }
