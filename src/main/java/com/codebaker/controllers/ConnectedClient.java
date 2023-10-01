@@ -31,8 +31,9 @@ public class ConnectedClient implements Runnable {
     private void awaitMessage() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            String inputString;
-            while ((inputString = input.readLine()) != null) {
+
+            while (this.socket.isConnected()) {
+                String inputString = input.readLine();
                 try {
                     Message message = mapper.convertValue(inputString, Message.class);
                     broadcastMessage(message, inputString);
@@ -48,6 +49,8 @@ public class ConnectedClient implements Runnable {
     }
 
     private void broadcastMessage(Message message, String json) {
+        System.out.println("broad casting message from :" + this.username + "\n message : " + message.getContent());
+
         connectedClients.forEach((client) -> {
             if (client != this)
                 client.receiveMessage(json);
@@ -56,7 +59,7 @@ public class ConnectedClient implements Runnable {
 
 
     private void broadcastMessage(Message message) {
-
+        System.out.println("broad casting message from :" + this.username + "\n message : " + message.getContent());
         try {
             String json = new ObjectMapper().writeValueAsString(message);
             connectedClients.forEach((client) -> {
@@ -75,6 +78,7 @@ public class ConnectedClient implements Runnable {
     public boolean receiveMessage(String json) {
         try {
             output.write(json);
+            output.newLine();
             return true;
         } catch (IOException e) {
             close();
@@ -84,21 +88,25 @@ public class ConnectedClient implements Runnable {
 
     @Override
     public void run() {
-        Timer timout = new Timer();
-        timout.schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                close();
-
-            }
-        }, 3000);
-
-
-        timout.cancel();
+        System.out.println("run the client");
+//        Timer timout = new Timer();
+//        timout.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//
+//                close();
+//
+//            }
+//        }, 3000);
+//
+//
+//        timout.cancel();
         try {
+            System.out.println("waiting for line");
             this.username = input.readLine();
+            System.out.println(this.username + " connected to the chat;");
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             close();
         }
 

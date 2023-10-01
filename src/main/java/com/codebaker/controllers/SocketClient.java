@@ -18,7 +18,7 @@ public class SocketClient {
     private ObjectMapper mapper;
 
     public SocketClient(String username) throws IOException {
-        this.socket = new Socket("192.168.1.6", 9000);
+        this.socket = new Socket("192.168.1.3", 9000);
         this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         this.output = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
         this.mapper = new ObjectMapper();
@@ -54,9 +54,11 @@ public class SocketClient {
         try {
             String json = mapper.writeValueAsString(message);
             this.output.write(json);
+            this.output.newLine();
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {
+            
             close();
         }
 
@@ -65,6 +67,7 @@ public class SocketClient {
     public void startClient() {
         try {
             output.write(username);
+            output.newLine();
         } catch (IOException e) {
             close();
         }
