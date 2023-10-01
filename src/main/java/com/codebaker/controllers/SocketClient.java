@@ -2,6 +2,7 @@ package com.codebaker.controllers;
 
 import com.codebaker.model.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -29,10 +30,12 @@ public class SocketClient {
         try {
             String inputString;
             while ((inputString = input.readLine()) != null) {
-                Message message = mapper.convertValue(inputString, Message.class);
+                Message message = mapper.readValue(inputString, Message.class);
                 System.out.printf("%s : %s", message.getSender(), message.getContent());
                 System.out.println();
             }
+        } catch (JsonProcessingException e) {
+
         } catch (IOException e) {
             close();
         }

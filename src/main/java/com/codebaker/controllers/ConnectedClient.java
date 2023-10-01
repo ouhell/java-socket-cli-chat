@@ -35,7 +35,7 @@ public class ConnectedClient implements Runnable {
             while (this.socket.isConnected()) {
                 String inputString = input.readLine();
                 try {
-                    Message message = mapper.convertValue(inputString, Message.class);
+                    Message message = mapper.readValue(inputString, Message.class);
                     broadcastMessage(message, inputString);
                 } catch (IllegalArgumentException e) {
                     System.out.println(e.getMessage());
