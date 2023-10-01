@@ -77,8 +77,9 @@ public class ConnectedClient implements Runnable {
 
     public boolean receiveMessage(String json) {
         try {
-            output.write(json);
-            output.newLine();
+            this.output.write(json);
+            this.output.newLine();
+            this.output.flush();
             return true;
         } catch (IOException e) {
             close();

@@ -55,10 +55,11 @@ public class SocketClient {
             String json = mapper.writeValueAsString(message);
             this.output.write(json);
             this.output.newLine();
+            this.output.flush();
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {
-            
+
             close();
         }
 
@@ -66,8 +67,10 @@ public class SocketClient {
 
     public void startClient() {
         try {
-            output.write(username);
-            output.newLine();
+            this.output.write(username);
+            this.output.newLine();
+            this.output.flush();
+
         } catch (IOException e) {
             close();
         }
