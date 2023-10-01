@@ -17,11 +17,12 @@ public class SocketClient {
 
     private ObjectMapper mapper;
 
-    public SocketClient() throws IOException {
-        this.socket = new Socket("192.168.1.4", 9000);
+    public SocketClient(String username) throws IOException {
+        this.socket = new Socket("192.168.1.6", 9000);
         this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         this.output = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
         this.mapper = new ObjectMapper();
+        this.username = username;
     }
 
     private void awaitMessages() {

@@ -8,20 +8,20 @@ import java.util.List;
 
 public class SocketServer {
     ServerSocket principalSocket;
-    List<ConnectedClient> clients = new ArrayList<>();
+    int port ;
 
-    public SocketServer() throws IOException {
-        this.principalSocket = new ServerSocket(9000);
-
+    public SocketServer(int port) throws IOException {
+        this.principalSocket = new ServerSocket(port);
+        this.port = port;
     }
 
 
     public void startServer() throws IOException {
-
+        System.out.println("Server Started On Port :: "+ this.port);
         while (!principalSocket.isClosed()) {
             Socket connectedSocket = principalSocket.accept();
             System.out.println("client connected :: " + connectedSocket.getInetAddress());
-            clients.add(new ConnectedClient(connectedSocket));
+
         }
     }
 }
